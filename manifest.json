@@ -6,9 +6,7 @@
   "description": "Redirects all YouTube links to Invidious. Previously hooktube-redirect.",
   "permissions": [
     "storage",
-    "*://*.youtube.com/*",
-    "*://*.youtube-nocookie.com/*",
-    "*://*.youtu.be/*",
+    "<all_urls>",
     "webRequest",
     "webRequestBlocking"
   ],
