@@ -5,11 +5,16 @@
   "version": "1.8",
   "description": "Redirects all YouTube links to Invidious. Previously hooktube-redirect.",
   "permissions": [
-    "storage"
+    "storage",
+    "*://*.youtube.com/*",
+    "*://*.youtube-nocookie.com/*",
+    "*://*.youtu.be/*",
+    "webRequest",
+    "webRequestBlocking"
   ],
   "applications": {
       "gecko": {
-        "id": "invidious-redirect@metlis",
+        "id": "invidious-redirect@doronbehar",
         "strict_min_version": "60.0"
       }
   },
@@ -20,12 +25,7 @@
     "page": "options.html",
     "browser_style": true
   },
-  "content_scripts": [
-    {
-      "matches": ["*://*.youtube.com/*"],
-      "run_at": "document_start",
-      "js": ["makehook.js"]
-    }
-  ]
-
+  "background": {
+    "scripts": ["background.js"]
+  }
 }
