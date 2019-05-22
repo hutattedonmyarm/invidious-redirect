@@ -1,16 +1,9 @@
 function createBlockingRequest(url, domain, embed_domain) {
   if (url.hostname.endsWith("youtube.com") || url.hostname.endsWith("youtube-nocookie.com")) {
-    console.log('youtube detected in url ' + url)
-    const v = url.searchParams.get("v");
-    const q = url.searchParams.get("q") || url.searchParams.get("search_query");
-    if (v) {
-      return {redirectUrl: domain + `/watch?v=${v}`}
-    } else if (q) {
-      return {redirectUrl: domain + `/search?q=${q}`}
-    } else if (url.pathname.startsWith("/channel/")) {
-      return {redirectUrl: domain + `${url.pathname}`}
+    if (url.pathname.search("^/(watch|playlist|search|channel)") > -1) {
+      return {redirectUrl: domain + `${url.pathname}` + `${url.search}`}
     } else if (url.pathname.startsWith("/embed/")) {
-      return {redirectUrl: embed_domain + `${url.pathname}`}
+      return {redirectUrl: embed_domain + `${url.pathname}` + `${url.search}`}
     }
   } else if (url.hostname.endsWith("youtu.be")) {
     return {redirectUrl: domain + `/watch?v=${url.pathname.replace("/", "")}`}
