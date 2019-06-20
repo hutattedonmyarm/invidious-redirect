@@ -2,7 +2,7 @@
 
   "manifest_version": 2,
   "name": "Invidious Redirect",
-  "version": "1.13",
+  "version": "1.14",
   "description": "Redirects all YouTube requests to an alternative frontend, based on Invidious-Redirect.",
   "permissions": [
     "storage",
@@ -12,7 +12,7 @@
   ],
   "applications": {
       "gecko": {
-        "id": "youtube-redirect@doronbehar",
+        "id": "youtube-redirect@hutattedonmyarm",
         "strict_min_version": "60.0"
       }
   },
