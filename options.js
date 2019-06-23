@@ -1,4 +1,5 @@
-const options_selectors = ['instance', 'embed_instance']
+const options_selectors = ['instance', 'embed_instance'];
+const id_auto_disable = 'automatic_disable';
 
 function saveOptions(e) {
   options_selectors.forEach(sel => {
@@ -17,7 +18,11 @@ function saveOptions(e) {
       [sel]: real_instance
     });
     e.preventDefault();
-  })
+  });
+  var auto_disable = document.querySelector('#' + id_auto_disable).checked;
+  browser.storage.sync.set({
+    [id_auto_disable]: auto_disable
+  });
 }
 
 function restoreOptions() {
@@ -26,7 +31,11 @@ function restoreOptions() {
     gettingItem.then((res) => {
       document.querySelector("#" + sel).value = res[sel] || 'https://invidio.us';
     });
-  })
+  });
+  var gettingItem = browser.storage.sync.get(id_auto_disable);
+    gettingItem.then((res) => {
+      document.querySelector("#" + id_auto_disable).checked = res[id_auto_disable] || false;
+  });
 }
 
 document.addEventListener('DOMContentLoaded', restoreOptions);

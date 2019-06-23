@@ -18,13 +18,19 @@ function createBlockingRequest(url, domain, embed_domain, originUrl) {
 
 browser.webRequest.onBeforeRequest.addListener(request => {
   const url = new URL(request.url);
-  const originUrl = request.originUrl ? new URL(request.originUrl) : null;
-  return browser.storage.sync.get('instance').then((res) => {
-    var instance = res.instance || 'https://invidio.us';
-    return browser.storage.sync.get('embed_instance').then((res) => {
-      var embed_instance = res.embed_instance || 'https://invidio.us';
-      return createBlockingRequest(url, instance, embed_instance, originUrl)
-    });
+  return browser.storage.sync.get('automatic_disable').then((res) => {
+    var auto_disable = res.automatic_disable;
+    let origin_url = null;
+    if (auto_disable && request.originUrl) {
+      origin_url = new URL(request.originUrl);
+    }
+    return browser.storage.sync.get('instance').then((res) => {
+      var instance = res.instance || 'https://invidio.us';
+      return browser.storage.sync.get('embed_instance').then((res) => {
+        var embed_instance = res.embed_instance || 'https://invidio.us';
+        return createBlockingRequest(url, instance, embed_instance, origin_url)
+      });
+    }); 
   });
 },
   {
