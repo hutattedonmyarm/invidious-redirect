@@ -1,8 +1,7 @@
 function createBlockingRequest(url, domain, embed_domain, originUrl) {
   const domainHost = new URL(domain).hostname;
   const embedDomainHost = new URL(embed_domain).hostname;
-  console.log(originUrl.hostname, domainHost, embedDomainHost);
-  if (originUrl.hostname.endsWith(domainHost) || originUrl.hostname.endsWith(embedDomainHost)) {
+  if (originUrl && (originUrl.hostname.endsWith(domainHost) || originUrl.hostname.endsWith(embedDomainHost))) {
     return;
   } else {
     if (url.hostname.endsWith("youtube.com") || url.hostname.endsWith("youtube-nocookie.com")) {
@@ -19,7 +18,7 @@ function createBlockingRequest(url, domain, embed_domain, originUrl) {
 
 browser.webRequest.onBeforeRequest.addListener(request => {
   const url = new URL(request.url);
-  const originUrl = new URL(request.originUrl);
+  const originUrl = request.originUrl ? new URL(request.originUrl) : null;
   return browser.storage.sync.get('instance').then((res) => {
     var instance = res.instance || 'https://invidio.us';
     return browser.storage.sync.get('embed_instance').then((res) => {
