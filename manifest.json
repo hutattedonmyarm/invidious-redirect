@@ -8,7 +8,9 @@
     "storage",
     "<all_urls>",
     "webRequest",
-    "webRequestBlocking"
+    "webRequestBlocking",
+    "cookies",
+    "tabs"
   ],
   "applications": {
       "gecko": {
