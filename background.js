@@ -39,17 +39,23 @@ function createBlockingRequest(url, domain, embed_domain, origin, auto_disable) 
 
 async function isContainerRedirect(origin_url, domain, embed_domain) {
   // Tab created by an extension?
+  console.log("Checking c redirect", origin_url, domain, embed_domain);
   if (origin_url && !origin_url.startsWith("moz-extension://")) {
     return false;
   }
   const tabs = await browser.tabs.query({active: true, currentWindow:true});
+  console.log(tabs.length, "active tabs");
   if (tabs.length == 0) {
     return false;
   }
   // Active tab in the current window - there can be only one
   const tab = tabs[0];
   // Tab opened by another tab?
-  if (tab.openerTabId === undefined) {
+  console.log("tab opened by", tab.openerTabId);
+  console.log(tab)
+  
+  // The Multi-Account-Container addon handles the redirect differently than the others (Google Container, etc)
+  if (tab.openerTabId === undefined && origin_url === 'moz-extension://46285a55-b46f-4dbd-9275-4c89d3cc0b71/') {
     return false;
   }
   try {
@@ -57,26 +63,27 @@ async function isContainerRedirect(origin_url, domain, embed_domain) {
     // but the title is set to the url
     const new_url = (tab.url === "about:blank" ? new URL("https://" + tab.title) : new URL(tab.url));
     // New tab should be a youtube tab 
+    console.log("url of new tab", new_url);
     if (new_url.hostname !== "youtube.com") {
       return;
     }
 
-    const opener_tab = await browser.tabs.get(tab.openerTabId);
+    const opener_tab = tab.openerTabId === undefined ? null : await browser.tabs.get(tab.openerTabId);
     const domain_url = new URL(domain);
     const embed_domain_url = new URL(embed_domain);
-    const opener_url = new URL(opener_tab.url);
+    const opener_url = opener_tab === null ? null : new URL(opener_tab.url);
     // The url of the tab this came from should be from our invidious instance 
-    if (opener_url.hostname !== opener_url.hostname && opener_host.hostname !== embed_domain_url.hostname) {
+    if (opener_url !== null && opener_url.hostname !== opener_url.hostname && opener_host.hostname !== embed_domain_url.hostname) {
       return false;
     }
 
     // It should also point to the same thing (video, playlist, user, etc) as the newly created youtube tab
-    if (new_url.href.replace(new_url.hostname, domain_url.hostname) !== opener_url.href && new_url.href.replace(new_url.hostname, embed_domain_url.hostname) !== opener_url.href) {
+    if (opener_url !== null && new_url.href.replace(new_url.hostname, domain_url.hostname) !== opener_url.href && new_url.href.replace(new_url.hostname, embed_domain_url.hostname) !== opener_url.href) {
       return false;
     }
 
     // And finally it needs to be in a different container than the new one
-    return opener_tab.cookieStoreId !== tab.cookieStoreId;
+    return opener_tab === null ? tab.cookieStoreId !== 'firefox-default' : opener_tab.cookieStoreId !== tab.cookieStoreId;
   } catch (error) {
     console.error("Error fetching the opener tab: ", error);
     return false;
