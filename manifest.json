@@ -1,8 +1,7 @@
 {
-
   "manifest_version": 2,
   "name": "Invidious Redirect",
-  "version": "1.15",
+  "version": "1.16",
   "description": "Redirects all YouTube requests to an alternative frontend, based on Invidious-Redirect.",
   "permissions": [
     "storage",
@@ -12,11 +11,14 @@
     "cookies",
     "tabs"
   ],
-  "applications": {
-      "gecko": {
-        "id": "youtube-redirect@hutattedonmyarm",
-        "strict_min_version": "60.0"
-      }
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "youtube-redirect@hutattedonmyarm",
+      "strict_min_version": "60.0"
+    },
+    "gecko_android": {
+      "strict_min_version": "113.0"
+    }
   },
   "options_ui": {
     "page": "options.html",
